@@ -45,3 +45,10 @@ extension Stack: CustomStringConvertible {
 }
 
 // The above code basicalluy makes our stack human readable and customizable
+
+// This allows us to create a stack from an array literal
+extension Stack: ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: Element...) {
+    storage = elements
+  }
+}
