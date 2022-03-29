@@ -30,11 +30,10 @@ var greeting = "Hello, playground"
 
 var testString1 = "h((e))llo(world()"
 
-// your code here
+// The time complexity of this algorithm is O(n), where n is the number of characters in the string. This algorithm also incurs an O(n) space complexity cost due to the usage of the Stack data structure.
 
 func checkParentheses(_ string: String)->Bool{
     
-    var counter = 0
     var stack = Stack<Character>()
     
     for character in string {
