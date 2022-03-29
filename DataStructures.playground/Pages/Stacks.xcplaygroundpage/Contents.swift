@@ -20,21 +20,21 @@ import Foundation
 var greeting = "Hello, playground"
 
 
-//example(of: "using a stack") {
-//  var stack = Stack<Int>()
-//  stack.push(1)
-//  stack.push(2)
-//  stack.push(3)
-//  stack.push(4)
-//
-//  print(stack)
-//
-//  if let poppedElement = stack.pop() {
-//    assert(4 == poppedElement)
-//    print("Popped: \(poppedElement)")
-//  }
-//    print(stack)
-//}
+example(of: "using a stack simple implemention without the ability to create from arrays or array literals") {
+  var stack = Stack<Int>()
+  stack.push(1)
+  stack.push(2)
+  stack.push(3)
+  stack.push(4)
+
+  print(stack)
+
+  if let poppedElement = stack.pop() {
+    assert(4 == poppedElement)
+    print("Popped: \(poppedElement)")
+  }
+    print(stack)
+}
 
 // This initializes a stack from an array but not for an array literal
 example(of: "initializing a stack from an array NOT an array literal") {
