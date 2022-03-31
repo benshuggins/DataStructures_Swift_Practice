@@ -10,19 +10,11 @@ public struct LinkedList<Value> {
   public var isEmpty: Bool {
     head == nil
   }
-}
-
-extension LinkedList: CustomStringConvertible {
-
-  public var description: String {
-    guard let head = head else {
-      return "Empty list"
-    }
-    return String(describing: head)
-  }
+    
     //_________________________________________________________________________________________________________
     // This is like a convenience addition that allows the ability to push or add a node to the front of the list
     public mutating func push(_ value: Value) {
+        copyNodes()
       head = Node(value: value, next: head)
       if tail == nil {
         tail = head
@@ -30,9 +22,9 @@ extension LinkedList: CustomStringConvertible {
     }
     
     //_________________________________________________________________________________________________________
-    // add a node to the end of the list  tail end insertion 
+    // add a node to the end of the list  tail end insertion
     public mutating func append(_ value: Value) {
-
+        copyNodes()
       // 1 Like before, if the list is empty, you’ll need to update both head and tail to the new node. Since append on an empty list is functionally identical to push, you simply invoke push to do the work for you.
       guard !isEmpty else {
         push(value)
@@ -67,6 +59,7 @@ extension LinkedList: CustomStringConvertible {
     public mutating func insert(_ value: Value,
                                 after node: Node<Value>)
                                 -> Node<Value> {
+                                    copyNodes()
       // 2 In the case where this method is called with the tail node, you’ll call the functionally equivalent append method. This will take care of updating tail.
       guard tail !== node else {
         append(value)
@@ -80,6 +73,7 @@ extension LinkedList: CustomStringConvertible {
     // POP - remove from the front of the list
     @discardableResult
     public mutating func pop() -> Value? {
+        copyNodes()
       defer {
         head = head?.next
         if isEmpty {
@@ -93,6 +87,7 @@ extension LinkedList: CustomStringConvertible {
     @discardableResult
     public mutating func removeLast() -> Value? {
       // 1 If head is nil, there’s nothing to remove, so you return nil.
+        copyNodes()
       guard let head = head else {
         return nil
       }
@@ -119,7 +114,8 @@ extension LinkedList: CustomStringConvertible {
     
     @discardableResult
     public mutating func remove(after node: Node<Value>) -> Value? {
-        defer { // this is where the unlinking of nodes occurs The unlinking of the nodes occurs in the defer block. Special care needs to be taken if the removed node is the tail node, since the tail reference will need to be updated.
+      guard let node = copyNodes(returningCopyOf: node) else { return nil }
+      defer {
         if node.next === tail {
           tail = node
         }
@@ -127,8 +123,71 @@ extension LinkedList: CustomStringConvertible {
       }
       return node.next?.value
     }
+    //This method will replace the existing nodes of your linked list with newly allocated ones with the same value.
+    
+ //   Now find all other methods in LinkedList marked with the mutating keyword and call copyNodes at the top of every method.
+    
+    // There are 6 methods that need to updated by calling copyNodes() so that they can be updated.
+    private mutating func copyNodes() {
+        guard !isKnownUniquelyReferenced(&head) else {
+          return
+        }
+      guard var oldNode = head else {
+        return
+      }
+      
+      head = Node(value: oldNode.value)
+      var newNode = head
+      
+      while let nextOldNode = oldNode.next {
+        newNode!.next = Node(value: nextOldNode.value)
+        newNode = newNode!.next
+        
+        oldNode = nextOldNode
+      }
+
+      tail = newNode
+    }
+    // this fixes remove(after:)
+    
+    private mutating func copyNodes(returningCopyOf node: Node<Value>?) -> Node<Value>? {
+      guard !isKnownUniquelyReferenced(&head) else {
+        return nil
+      }
+      guard var oldNode = head else {
+        return nil
+      }
+      
+      head = Node(value: oldNode.value)
+      var newNode = head
+      var nodeCopy: Node<Value>?
+      
+      while let nextOldNode = oldNode.next {
+        if oldNode === node {
+          nodeCopy = newNode
+        }
+        newNode!.next = Node(value: nextOldNode.value)
+        newNode = newNode!.next
+        oldNode = nextOldNode
+      }
+      
+      return nodeCopy
+    }
+    
+
+}
+
+extension LinkedList: CustomStringConvertible {
+
+  public var description: String {
+    guard let head = head else {
+      return "Empty list"
+    }
+    return String(describing: head)
+  }
     
 }
+   
 // THis allows for indexing into a Collection type
 extension LinkedList: Collection {
 
@@ -174,4 +233,6 @@ extension LinkedList: Collection {
     public subscript(position: Index) -> Value {
       position.node!.value
     }
+    
+
 }

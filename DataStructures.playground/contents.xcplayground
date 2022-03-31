@@ -5,5 +5,8 @@
         <page name='Stacks-Challenge#1'/>
         <page name='Stacks-Challenge#2'/>
         <page name='LinkedList'/>
+        <page name='BubbleSort'/>
+        <page name='SelectionSort'/>
+        <page name='InsertionSort'/>
     </pages>
 </playground>

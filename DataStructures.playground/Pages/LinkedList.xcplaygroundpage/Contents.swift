@@ -163,7 +163,12 @@ example(of: "Does link list have value semantics??? linked list cow") {
   var list1 = LinkedList<Int>()
   list1.append(1)
   list1.append(2)
-  var list2 = list1
+ // var list2 = list1
+    
+    print("List1 uniquely referenced: \(isKnownUniquelyReferenced(&list1.head))")
+    var list2 = list1
+    print("List1 uniquely referenced: \(isKnownUniquelyReferenced(&list1.head))")
+    
   print("List1: \(list1)")
   print("List2: \(list2)")
   
@@ -171,7 +176,32 @@ example(of: "Does link list have value semantics??? linked list cow") {
   list2.append(3)
   print("List1: \(list1)")
   print("List2: \(list2)")
+    
+    print("Removing middle node on list2")
+    if let node = list2.node(at: 0) {
+      list2.remove(after: node)
+    }
+    print("List2: \(list2)")
 }
 
 //
 //The strategy to achieve value semantics with COW is fairly straightforward. Before mutating the contents of the linked list, you want to perform a copy of the underlying storage and update all references (head and tail) to the new copy.
+// https://www.raywenderlich.com/books/data-structures-algorithms-in-swift/v3.0/chapters/6-linked-list
+
+
+// LinkedList uses a class which is reference bases so in order to imp[lement COW or (copy on write) we have to make a copy and update the head and the tail.
+
+//Key points
+//Linked lists are linear and unidirectional. As soon as you move a reference from one node to another, you can’t go back.
+//Linked lists have a O(1) time complexity for head first insertions. Arrays have O(n) time complexity for head-first insertions.
+//Conforming to Swift collection protocols such as Sequence and Collection offers a host of helpful methods for a fairly small amount of requirements.
+//Copy-on-write behavior lets you achieve value semantics.
+
+var list1 = LinkedList<Int>()
+(1...3).forEach { list1.append($0) }
+var list2 = list1
+
+list2.push(0)
+
+print("List1 \(list1)")  // List1 1 -> 2 -> 3  proves that COW is working, head first insertions can avoid the cow tax
+print("List2 \(list2)")  // List2 0 -> 1 -> 2 -> 3
